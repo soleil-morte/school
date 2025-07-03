@@ -27,22 +27,53 @@ def Index(request):
 
 
 def Teachers(request):
+    if request.method == 'POST':
+        r = request.POST
+        full_name = r['full_name']
+        age = r['age']
+        subject = r['subject']
+        experiance = r['experiance']
+        Teacher.objects.create(full_name=full_name, age=age, experiance=experiance, subject_id=subject)
+
+        # student.subject.add(r['subject'])
+        return redirect('/teachers/')
+
     context = {
         'teacher':Teacher.objects.all(),
+        'subject':Subject.objects.all(),
     }
 
     return render(request, 'teachers.html', context)
 
 
 def Groups(request):
+    if request.method == 'POST':
+        r = request.POST
+        name = r['name']
+        subject = r['subject']
+        teacher = r['teacher']
+        Group.objects.create(name=name, teacher_id=teacher, subject_id=subject)
+
+        return redirect('/groups/')
+
     context = {
         'group':Group.objects.all(),
+        'subject':Subject.objects.all(),
+        'teacher':Teacher.objects.all(),
     }
 
     return render(request, 'groups.html', context)
 
 
 def Subjects(request):
+    if request.method == 'POST':
+        r = request.POST
+        name = r['name']
+        Subject.objects.create(name=name,)
+
+        # student.subject.add(r['subject'])
+        return redirect('/subjects/')
+
     context = {
         'subject':Subject.objects.all(),
     }
