@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import *
-
+from django.shortcuts import get_object_or_404, redirect
+from django.http import Http404
 # Create your views here.
 def Index(request):
     if request.method == 'POST':
@@ -79,3 +80,24 @@ def Subjects(request):
     }
 
     return render(request, 'subjects.html', context)
+
+
+def delete_object(request, model_name, id):
+    # Словарь, связывающий названия моделей с их классами
+    model_mapping = {
+        'student': Student,
+        'teacher': Teacher,
+        'subject': Subject,
+        'group': Group,
+    }
+    
+    # Получаем модель по имени
+    model = model_mapping.get(model_name.lower())
+    if not model:
+        raise Http404("Модель не найдена")
+    
+    # Находим объект или возвращаем 404
+    obj = get_object_or_404(model, id=id)
+    obj.delete()
+    
+    return redirect(request.META.get('HTTP_REFERER', '/index/'))

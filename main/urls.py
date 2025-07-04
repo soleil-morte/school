@@ -7,4 +7,5 @@ urlpatterns=[
     path('teachers/',Teachers),
     path('groups/',Groups),
     path('subjects/',Subjects),
+    path('delete/<str:model_name>/<int:id>/', delete_object, name='delete_object'),
 ]
