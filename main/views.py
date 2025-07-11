@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect
 from .models import *
 from django.shortcuts import get_object_or_404, redirect
 from django.http import Http404
+from .forms import *
+import pandas as pd
+from django.http import HttpResponse
 # Create your views here.
 def Index(request):
     if request.method == 'POST':
@@ -67,16 +70,25 @@ def Groups(request):
 
 
 def Subjects(request):
-    if request.method == 'POST':
-        r = request.POST
-        name = r['name']
-        Subject.objects.create(name=name,)
+    # if request.method == 'POST':
+    #     r = request.POST
+    #     name = r['name']
+    #     Subject.objects.create(name=name,)
 
-        # student.subject.add(r['subject'])
-        return redirect('/subjects/')
+    #     # student.subject.add(r['subject'])
+    #     return redirect('/subjects/')
+    if request.method == 'POST':
+        form = Subjectsform(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('/subjects/')
+    else:
+        form = Subjectsform()
 
     context = {
-        'subject':Subject.objects.all(),
+        'form':form,
+        'subject':Subject.objects.all()
     }
 
     return render(request, 'subjects.html', context)
@@ -101,3 +113,18 @@ def delete_object(request, model_name, id):
     obj.delete()
     
     return redirect(request.META.get('HTTP_REFERER', '/index/'))
+
+
+def export_students_exel(request):
+
+    students = Student.objects.all().values('f_name', 'l_name', 'age', 'group', 'subject', 'payment')
+
+    df = pd.DataFrame(students)
+
+    response = HttpResponse(content_type='application/vdn.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=students.xlsx'
+
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Students')
+
+    return response

@@ -8,4 +8,5 @@ urlpatterns=[
     path('groups/',Groups),
     path('subjects/',Subjects),
     path('delete/<str:model_name>/<int:id>/', delete_object, name='delete_object'),
+    path('export-students/', export_students_exel),
 ]
