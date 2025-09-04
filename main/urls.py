@@ -3,6 +3,7 @@ from .views import *
 from django.contrib.auth.views import LoginView
 
 urlpatterns=[
+    path('', Index, name='home'),
     path('index/',Index),
     path('teachers/',Teachers),
     path('groups/',Groups),
